@@ -43,7 +43,7 @@ app.get("/", requireAuth, (req, res) => {
   res.send(`Your phoneno ${req.user.phoneno}`);
 });
 
-const PORT = (port = process.env.PORT || 3000);
+const PORT = (port = process.env.PORT || 4000);
 app.listen(PORT, () => {
   console.log(`listening on node ${PORT} `);
 });
