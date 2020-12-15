@@ -8,29 +8,31 @@ const { response } = require("express");
 const router = express.Router();
 
 router.post("/signup", async (req, res) => {
-  const { phoneno, password } = req.body;
+  const { phoneno, password,gender,name,email,userType } = req.body;
+  console.log(req.body)
 
   try {
     console.log("/signup");
     console.log("This is Req.body", req.body);
-    const user = new User({ phoneno, password });
-
+    const user = new UserProfile({ phoneno, password,gender,name,email,userType });
+    const user2 = new User({ phoneno, password });
     await user.save();
+    await user2.save();
     const token = jwt.sign({ userId: user._id }, "MY_SECERET");
     res.send({ token });
   } catch (err) {
-    // console.log("There is an err", err);
+    console.log("Error:", err);
 
     res.status(422).send(err.message);
   }
 });
 router.post("/updateUserProfile", async (req, res) => {
-  const { phoneno, password, email, aadharno, name } = req.body;
+  const { phoneno, password, email,  name } = req.body;
   console.log(req.body);
 
   try {
     console.log("/updateUserProfile");
-    const user = new UserProfile({ phoneno, password, email, aadharno, name });
+    const user = new UserProfile({ phoneno, password, email,  name });
 
     await user.save();
     const token = jwt.sign({ userId: user._id }, "MY_SECERET");
@@ -73,7 +75,7 @@ router.post("/signin", async (req, res) => {
       .send({ error: "Must provide phone no and password" });
   }
 
-  const user = await User.findOne({ phoneno });
+  const user = await UserProfile.findOne({ phoneno });
   if (!user) {
     return res.status(422).send({ error: "Invalid Password or Phone No....." });
   }
@@ -82,8 +84,9 @@ router.post("/signin", async (req, res) => {
     await user.comparePassword(password);
 
     const token = jwt.sign({ userId: user._id }, "MY_SECERET");
+    console.log(user);
 
-    res.send({ token });
+    res.send({ token ,userType:user.userType});
   } catch (err) {
     return res.status(422).send({ error: "Invalid Password or Phone No. $ " });
   }
