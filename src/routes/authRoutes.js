@@ -91,4 +91,28 @@ router.post("/signin", async (req, res) => {
     return res.status(422).send({ error: "Invalid Password or Phone No. $ " });
   }
 });
+
+
+router.post("/getUser", async (req, res) => {
+  console.log("/getUser");
+  const { phoneno } = req.body;
+  if (!phoneno) {
+    return res
+      .status(422)
+      .send({ error: "Must provide phone no" });
+  }
+
+  const user = await UserProfile.findOne({ phoneno });
+  if (!user) {
+    return res.status(422).send({ error: "Invalid Password or Phone No....." });
+  }
+
+  try {
+   
+
+    res.send({ user:user});
+  } catch (err) {
+    return res.status(422).send({ error: "Invalid Password or Phone No. $ " });
+  }
+});
 module.exports = router;
